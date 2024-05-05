@@ -1,0 +1,136 @@
+[
+    {
+        "description": "bottlesWater",
+        "quantity": 240,
+        "price": 0.25,
+        "vat": 8
+    },
+    {
+        "description": "chips",
+        "quantity": 38,
+        "price": 2.40,
+        "vat": 8
+    },
+    {
+        "description": "TV",
+        "quantity": 1,
+        "price": 760,
+        "vat": 22
+    },
+    {
+        "description": "cocaCola",
+        "quantity": 77,
+        "price": 0.50,
+        "vat": 18,
+        "discount": 0.10
+    },
+    {
+        "description": "chocolate",
+        "quantity": 38,
+        "price": 1.25,
+        "vat": 22
+    },
+    {
+        "description": "bottlesOfHand",
+        "quantity": 92,
+        "price": 3.78,
+        "vat": 8
+    },
+    {
+        "description": "fish",
+        "quantity": 49,
+        "price": 8.30,
+        "vat": 18
+    },
+    {
+        "description": "humus",
+        "quantity": 16,
+        "price": 2.66,
+        "vat": 18
+    },
+    {
+        "description": "whiteWine",
+        "quantity": 18,
+        "price": 9.20,
+        "vat": 18,
+        "discount": 0.02
+    },
+    {
+        "description": "bananas",
+        "quantity": 8,
+        "price": 1.25,
+        "vat": 22
+    },
+    {
+        "description": "bottlesOfWine",
+        "quantity": 22,
+        "price": 9.78,
+        "vat": 22
+    },
+    {
+        "description": "oil",
+        "quantity": 10,
+        "price": 8.30,
+        "vat": 18
+    },
+    {
+        "description": "cigarettes",
+        "quantity": 89,
+        "price": 5.46,
+        "vat": 22
+    },
+    {
+        "description": "cookies",
+        "quantity": 33,
+        "price": 1.34,
+        "vat": 8
+    },
+    {
+        "description": "yogurts",
+        "quantity": 14,
+        "price": 0.66,
+        "vat": 18
+    },
+    {
+        "description": "bleach",
+        "quantity": 11,
+        "price": 1.23,
+        "vat": 22
+    },
+    {
+        "description": "napkins",
+        "quantity": 85,
+        "price": 0.21,
+        "vat": 8
+    },
+    {
+        "description": "eggs",
+        "quantity": 104,
+        "price": 0.16,
+        "vat": 18
+    },
+    {
+        "description": "plastic",
+        "quantity": 398,
+        "price": 0.05,
+        "vat": 18
+    },
+    {
+        "description": "aluminumFoils",
+        "quantity": 21,
+        "price": 1.12,
+        "vat": 8
+    },
+    {
+        "description": "razors",
+        "quantity": 51,
+        "price": 8.10,
+        "vat": 8
+    },
+    {
+        "description": "lotions",
+        "quantity": 205,
+        "price": 12,
+        "vat": 22
+    }
+]
