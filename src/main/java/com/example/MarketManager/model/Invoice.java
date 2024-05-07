@@ -16,12 +16,48 @@ public class Invoice {
         return products.isEmpty();
     }
 
+    public int getTotalQuantity() {
+        int totalQuantity = 0;
+        for (Product product : products) {
+            totalQuantity += product.getQuantity();
+        }
+        return totalQuantity;
+    }
+
     public void addProduct(Product product) {
         products.add(product);
     }
 
     public double getTotal() {
         return total;
+    }
+
+    public int getProductQuantity(Product product) {
+        int quantity = 0;
+        for (Product p : products) {
+            if (p.getDescription().equals(product.getDescription())) {
+                quantity += p.getQuantity();
+            }
+        }
+        return quantity;
+    }
+
+    public boolean hasSpaceForProduct(Product product) {
+        double totalInvoiceAmount = calculateTotal();
+        double productAmount = product.getQuantity() * product.getPrice();
+        return totalInvoiceAmount + productAmount <= 500;
+    }
+
+    private double calculateTotal() {
+        double total = 0;
+        for (Product product : products) {
+            total += product.getQuantity() * product.getPrice();
+        }
+        return total;
+    }
+
+    public int getProductCount() {
+        return this.products.size();
     }
 
     public void setTotal(double total) {
@@ -36,20 +72,4 @@ public class Invoice {
         this.products = products;
     }
 
-    /*
-     * @Override
-     * public String toString() {
-     * StringBuilder sb = new StringBuilder();
-     * sb.append("Invoice:\n");
-     * for (Product product : products) {
-     * sb.append("Description: ").append(product.getDescription()).append(", ");
-     * sb.append("Quantity: ").append(product.getQuantity()).append(", ");
-     * sb.append("Price: ").append(product.getPrice()).append(", ");
-     * sb.append("VAT: ").append(product.getVat()).append(", ");
-     * sb.append("Discount: ").append(product.getDiscount()).append("\n");
-     * }
-     * sb.append("Total: ").append(total).append("\n");
-     * return sb.toString();
-     * }
-     */
 }

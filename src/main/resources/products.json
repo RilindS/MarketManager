@@ -1,22 +1,24 @@
 [
     {
-        "description": "bottlesWater",
-        "quantity": 240,
-        "price": 0.25,
-        "vat": 8
-    },
-    {
         "description": "chips",
         "quantity": 38,
         "price": 2.40,
         "vat": 8
     },
     {
+        "description": "bottlesWater",
+        "quantity": 240,
+        "price": 0.25,
+        "vat": 8
+    },
+   
+    {
         "description": "TV",
         "quantity": 1,
         "price": 760,
         "vat": 22
     },
+    
     {
         "description": "cocaCola",
         "quantity": 77,

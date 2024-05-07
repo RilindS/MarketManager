@@ -1,31 +1,28 @@
 package com.example.MarketManager.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class Product {
     private String description;
     private int quantity;
     private double price;
-    private double vat;
-    private double discount;
 
-    public Product() {
-        // Default constructor needed for Jackson deserialization
+    private double discount;
+    private double vat;
+
+    public Product(Product other) {
+        this.description = other.description;
+        this.quantity = other.quantity;
+        this.price = other.price;
+        this.vat = other.vat;
+        this.discount = other.discount;
     }
 
-    @JsonCreator
-    public Product(
-            @JsonProperty("description") String description,
-            @JsonProperty("quantity") int quantity,
-            @JsonProperty("price") double price,
-            @JsonProperty("vat") int vat,
-            @JsonProperty("discount") double discount) {
+    public Product(String description, int quantity, double price, double vat, double discount) {
         this.description = description;
         this.quantity = quantity;
         this.price = price;
-        this.vat = vat;
+
         this.discount = discount;
+        this.vat = vat;
     }
 
     public String getDescription() {
@@ -74,8 +71,9 @@ public class Product {
                 "description='" + description + '\'' +
                 ", quantity=" + quantity +
                 ", price=" + price +
-                ", vat=" + vat +
+
                 ", discount=" + discount +
+                ", vat=" + vat +
                 '}';
     }
 }
