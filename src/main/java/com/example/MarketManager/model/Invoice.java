@@ -2,26 +2,30 @@ package com.example.MarketManager.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.example.MarketManager.Service.InvoiceService;
 
 public class Invoice {
     private List<Product> products;
     private double total;
+    private InvoiceService invoiceService;
 
     public Invoice() {
         this.products = new ArrayList<>();
         this.total = 0;
+        this.invoiceService = new InvoiceService();
+    }
+
+    public boolean containsProduct(Product productToCheck) {
+        for (Product product : products) {
+            if (product.equals(productToCheck)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isEmpty() {
         return products.isEmpty();
-    }
-
-    public int getTotalQuantity() {
-        int totalQuantity = 0;
-        for (Product product : products) {
-            totalQuantity += product.getQuantity();
-        }
-        return totalQuantity;
     }
 
     public void addProduct(Product product) {
@@ -29,7 +33,11 @@ public class Invoice {
     }
 
     public double getTotal() {
-        return total;
+        double totalAmount = 0.0;
+        for (Product product : products) {
+            totalAmount += invoiceService.calculateTotal(product);
+        }
+        return totalAmount;
     }
 
     public int getProductQuantity(Product product) {
@@ -43,7 +51,7 @@ public class Invoice {
     }
 
     public boolean hasSpaceForProduct(Product product) {
-        double totalInvoiceAmount = calculateTotal();
+        double totalInvoiceAmount = getTotal();
         double productAmount = product.getQuantity() * product.getPrice();
         return totalInvoiceAmount + productAmount <= 500;
     }

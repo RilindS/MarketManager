@@ -15,55 +15,52 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class InvoiceService {
-
     public List<Invoice> calculateInvoices(List<Product> products) {
         List<Invoice> invoices = new ArrayList<>();
-        double currentInvoiceTotal = 0;
 
         for (Product product : products) {
+            while (product.getQuantity() > 0) {
+                boolean productAdded = false;
 
-            if (product.getPrice() > 500) {
-                Invoice newInvoice = new Invoice();
-                newInvoice.addProduct(product);
-                invoices.add(newInvoice);
-            }
-            if (true) {
-                boolean addedToExistingInvoice = false;
+                if (product.getPrice() > 500) {
+                    Invoice newInvoice = new Invoice();
+                    int quantityToAdd = Math.min(product.getQuantity(), 50);
+                    Product productToAdd = new Product(product);
+                    productToAdd.setQuantity(quantityToAdd);
+                    newInvoice.addProduct(productToAdd);
+                    invoices.add(newInvoice);
+                    product.setQuantity(product.getQuantity() - quantityToAdd);
+                    continue;
+                }
+
                 for (Invoice invoice : invoices) {
-
-                    if (invoice.hasSpaceForProduct(product) && (invoice.getTotal() + calculateTotal(product)) <= 500) {
-
-                        Product productToAdd = new Product(product);
-                        int remainingQuantity = 50 - invoice.getProductQuantity(product);
-                        if (product.getQuantity() <= remainingQuantity) {
-
-                            productToAdd.setQuantity(product.getQuantity());
-                            invoice.addProduct(productToAdd);
-                            addedToExistingInvoice = true;
-                            break;
-                        } else {
-
-                            productToAdd.setQuantity(remainingQuantity);
-                            invoice.addProduct(productToAdd);
-                            product.setQuantity(product.getQuantity() - remainingQuantity);
+                    if (invoice.containsProduct(product) && invoice.getProductQuantity(product) >= 50) {
+                        continue;
+                    }
+                    if ((invoice.getTotal() + calculateTotal(product)) <= 500) {
+                        double productTotal = calculateTotal(product);
+                        if (invoice.getTotal() + productTotal <= 500) {
+                            int remainingQuantity = 50 - invoice.getProductQuantity(product);
+                            int quantityToAdd = Math.min(product.getQuantity(), remainingQuantity);
+                            if (quantityToAdd > 0) {
+                                Product productToAdd = new Product(product);
+                                productToAdd.setQuantity(quantityToAdd);
+                                invoice.addProduct(productToAdd);
+                                product.setQuantity(product.getQuantity() - quantityToAdd);
+                                productAdded = true;
+                            }
                         }
                     }
                 }
 
-                if (!addedToExistingInvoice && (currentInvoiceTotal + calculateTotal(product)) <= 500) {
-
+                if (!productAdded) {
+                    int quantityToAdd = Math.min(product.getQuantity(), 50);
                     Invoice newInvoice = new Invoice();
                     Product productToAdd = new Product(product);
-                    int quantityToAdd = Math.min(product.getQuantity(), 50);
                     productToAdd.setQuantity(quantityToAdd);
                     newInvoice.addProduct(productToAdd);
                     invoices.add(newInvoice);
-
-                    if (product.getQuantity() > 50) {
-                        product.setQuantity(product.getQuantity() - quantityToAdd);
-                    }
-
-                    currentInvoiceTotal += calculateTotal(productToAdd);
+                    product.setQuantity(product.getQuantity() - quantityToAdd);
                 }
             }
         }
@@ -78,7 +75,7 @@ public class InvoiceService {
         return vatAmount;
     }
 
-    private double calculateTotal(Product product) {
+    public double calculateTotal(Product product) {
 
         double totalPrice = product.getQuantity() * product.getPrice();
         double discountAmount = product.getPrice() * product.getDiscount();
@@ -105,18 +102,28 @@ public class InvoiceService {
                     .append("<th>Product</th><th>Quantity</th><th>Price</th><th>Discount</th><th>Vat</th><th>Total</th>")
                     .append("</tr>");
             Invoice invoice = invoices.get(i);
+            double subtotal = 0;
             for (Product product : invoice.getProducts()) {
+                double productTotal = calculateTotal(product);
+                double productVAT = calculateVAT(product);
+                double productSubtotal = productTotal - productVAT;
                 html.append("<tr>")
                         .append("<td>").append(product.getDescription()).append("</td>")
                         .append("<td>").append(product.getQuantity()).append("</td>")
                         .append("<td>").append(product.getPrice()).append("</td>")
                         .append("<td>").append(product.getDiscount()).append("</td>")
                         .append("<td>").append(product.getVat()).append("</td>")
-                        .append("<td>").append(calculatePriceWithoutVat(product)).append("+")
-                        .append(calculateVAT(product)).append("=").append(calculateTotal(product))
+                        .append("<td>").append(productSubtotal).append("+")
+                        .append(calculateVAT(product)).append("=").append(productTotal)
                         .append("</td>")
                         .append("</tr>");
+                subtotal += productSubtotal;
             }
+            double vatTotal = calculateVAT(invoice.getProducts());
+            double invoiceTotal = subtotal + vatTotal;
+            html.append("<tr><td colspan='5'>Subtotal</td><td>").append(subtotal).append("</td></tr>")
+                    .append("<tr><td colspan='5'>VAT</td><td>").append(vatTotal).append("</td></tr>")
+                    .append("<tr><td colspan='5'>Total</td><td>").append(invoiceTotal).append("</td></tr>");
             html.append("</table></body></html>");
         }
         return html.toString();
@@ -131,6 +138,7 @@ public class InvoiceService {
             ArrayNode productsArray = objectMapper.createArrayNode();
 
             double invoiceTotal = 0.0;
+            double subtotal = 0.0;
             for (Product product : invoice.getProducts()) {
                 ObjectNode productNode = objectMapper.createObjectNode();
                 productNode.put("description", product.getDescription());
@@ -140,8 +148,14 @@ public class InvoiceService {
                 productNode.put("vat", product.getVat());
 
                 double productTotal = calculateTotal(product);
+                double productVAT = calculateVAT(product);
+                double productSubtotal = productTotal - productVAT;
+
+                productNode.put("subtotal", productSubtotal);
+                productNode.put("vat", productVAT);
                 productNode.put("total", productTotal);
 
+                subtotal += productSubtotal;
                 invoiceTotal += productTotal;
 
                 productsArray.add(productNode);
@@ -149,12 +163,23 @@ public class InvoiceService {
 
             invoiceNode.set("products", productsArray);
 
+            invoiceNode.put("subtotal", subtotal);
+            double vatTotal = calculateVAT(invoice.getProducts());
+            invoiceNode.put("vat", vatTotal);
             invoiceNode.put("total", invoiceTotal);
 
             invoicesArray.add(invoiceNode);
         }
 
         return invoicesArray.toString();
+    }
+
+    private double calculateVAT(List<Product> products) {
+        double totalVAT = 0.0;
+        for (Product product : products) {
+            totalVAT += calculateVAT(product);
+        }
+        return totalVAT;
     }
 
 }
